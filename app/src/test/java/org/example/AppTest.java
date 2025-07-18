@@ -7,8 +7,58 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class AppTest {
-    @Test void appHasAGreeting() {
-        App classUnderTest = new App();
-        assertNotNull(classUnderTest.getGreeting(), "app should have a greeting");
+
+    static class TestCutie implements Cutie {
+        private final String desc;
+        private final int rating;
+
+        TestCutie(String desc, int rating) {
+            this.desc = desc;
+            this.rating = rating;
+        }
+
+        public String description() {
+            return desc;
+        }
+
+        public Integer cutenessRating() {
+            return rating;
+        }
+    }
+
+    @Test
+    void testEnqueueDequeueSize() {
+        QueueTees queue = new QueueTees();
+        TestCutie a = new TestCutie("Cute A", 8);
+        TestCutie b = new TestCutie("Cute B", 9);
+
+        assertEquals(0, queue.size());
+
+        queue.enqueue(a);
+        queue.enqueue(b);
+
+        assertEquals(2, queue.size());
+        assertEquals("Cute A", queue.dequeue().description());
+        assertEquals("Cute B", queue.dequeue().description());
+        assertEquals(0, queue.size());
+    }
+
+    @Test
+    void testQueueFullCondition() {
+        QueueTees queue = new QueueTees();
+        for (int i = 0; i < 10; i++) {
+            queue.enqueue(new TestCutie("Cute #" + i, i));
+        }
+        assertEquals(10, queue.size());
+
+        // This enqueue should not increase the size
+        queue.enqueue(new TestCutie("Extra Cute", 11));
+        assertEquals(10, queue.size());
+    }
+
+    @Test
+    void testDequeueEmptyQueue() {
+        QueueTees queue = new QueueTees();
+        assertNull(queue.dequeue());
     }
 }
